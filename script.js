@@ -16,13 +16,18 @@ let restoreBackgroundCallback = function(element, bgColor){
     };
 }
 
-let setBackground = function(element, backgroundColor){
-    element.style.backgroundColor = backgroundColor;
+let setBackground = function(element){
+    console.log(enteredBackgroundColor);
+    if(random){
+        element.style.backgroundColor = "#" + randomColor();
+    }else{
+        element.style.backgroundColor = enteredBackgroundColor;
+    }
 }
 
-let setBackgroundCallback = function(element, bgColor){
+let setBackgroundCallback = function(element){
     return function (){
-        setBackground(element,bgColor);
+        setBackground(element);
     };
 }
 
@@ -41,7 +46,7 @@ let emptyGrid = function (divGrid){
         divGrid.removeChild(divGrid.firstChild);
     }
 }
-let createGrid = function (side, bgColor){
+let createGrid = function (side){
     let theDivGrid = document.querySelector('.grid');
     let gridDimensions = calculateGridDimensions(theDivGrid);
     let elementDimensions = 0;
@@ -54,7 +59,7 @@ let createGrid = function (side, bgColor){
     for(let i = 0; i< side ; ++i){
         for (let j = 0 ; j < side ; ++j){
             element = document.createElement("div");            
-            element.addEventListener("mouseenter", setBackgroundCallback(element, bgColor));
+            element.addEventListener("mouseenter", setBackgroundCallback(element));
             theDivGrid.append(element);
             if (elementDimensions === 0){
                 elementDimensions = calculateGridElementDimensions(gridDimensions/side,element);
@@ -63,10 +68,11 @@ let createGrid = function (side, bgColor){
             element.style.width = elementDimensions + "px";
         }
     }
+    return theDivGrid;
 
 }
 
-let sliderControls = function (side, bgColor){
+let sliderControls = function (side){
     let rangeText = document.querySelector(".slider-text");
     rangeText.innerText = side + " x " + side;
     let slider = document.querySelector('.slider');
@@ -75,17 +81,33 @@ let sliderControls = function (side, bgColor){
         rangeText.innerText = e.target.value + "x" + e.target.value;
     });
     slider.addEventListener("change", (e) => {        
-        createGrid(e.target.value, bgColor);
+        createGrid(e.target.value);
     });
     return;
 }
 
-let app = function (){
-    let backgroundColor = "white";
-    let enteredBackgroundColor = "black";
-    let side = 16;
+let randomColor = function (){
+    return Math.floor(Math.random()*16777215).toString(16);
+}
 
+let buttonRandomColor = function (){
+    let btn = document.querySelector("button");
+
+    btn.addEventListener("click", (e) => {
+        random = true;
+    });
+    return;
+}
+
+let backgroundColor = "white";
+let enteredBackgroundColor = "black";
+let random = false;
+
+let app = function (){
+    
+    let side = 16;
     createGrid(side, enteredBackgroundColor);
     sliderControls(side, enteredBackgroundColor);
+    buttonRandomColor();
 }
 window.onload = function(){ app();}
