@@ -1,0 +1,22 @@
+.content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: content-box;
+}
+
+.grid{    
+    display: flex;
+    flex-wrap: wrap;
+    width: 700px;
+    height: 700px;
+    border: 1px solid black;
+}
+
+.grid > div{
+    /*display: block-inline;*/
+    /*width: 30px;
+    height: 30px;*/
+    /*border: 1px solid gray;*/
+}
