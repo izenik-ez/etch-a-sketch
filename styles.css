@@ -1,8 +1,8 @@
 .content{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     box-sizing: content-box;
 }
 
@@ -15,8 +15,5 @@
 }
 
 .grid > div{
-    /*display: block-inline;*/
-    /*width: 30px;
-    height: 30px;*/
-    /*border: 1px solid gray;*/
+    border: 1px solid gray;
 }

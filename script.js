@@ -2,60 +2,90 @@
 Closures needed for createGrid loops:
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures#creating_closures_in_loops_a_common_mistake
 */
-let setBackground = function(element){
-    element.style.backgroundColor = "black";
+
+
+
+
+let restoreBackground = function(element, backgroundColor){
+    element.style.backgroundColor = backgroundColor;
 }
 
-let restoreBackground = function(element){
-    element.style.backgroundColor = "white";
-}
-let setBackgroundCallback = function(element){
+let restoreBackgroundCallback = function(element, bgColor){
     return function (){
-        setBackground(element);
-    };
-}
-let restoreBackgroundCallback = function(element){
-    return function (){
-        restoreBackground(element);
+        restoreBackground(element, bgColor);
     };
 }
 
-let getGridDimensions = function (divElement) {
-    // Not need this object. Because divElement is a square
-    // we only need the width, for example.
-    // CHANGE!!!
-    let divDimensions = {
-        height: divElement.offsetHeight -
-            2 * parseFloat(getComputedStyle(divElement).borderWidth),
-        width: divElement.offsetWidth -
-            2* parseFloat(getComputedStyle(divElement).borderWidth)
-        //In case we put border to the grids the value is
-        // 34 = 16 * 2 + 2 * 1
-        //    16 sides and two borders per grids plus 2 borders for
-        //the grid container.
-    };
-    return divDimensions;
-    
+let setBackground = function(element, backgroundColor){
+    element.style.backgroundColor = backgroundColor;
 }
-let createGrid = function (side){
+
+let setBackgroundCallback = function(element, bgColor){
+    return function (){
+        setBackground(element,bgColor);
+    };
+}
+
+
+
+let calculateGridDimensions = function(divElement){
+    return divElement.offsetHeight - 2 * parseFloat(getComputedStyle(divElement).borderWidth);
+}
+let  calculateGridElementDimensions = function(gridDimensions, gridElement)
+{    
+    return gridDimensions - 2*(parseFloat(getComputedStyle(gridElement).borderWidth));    
+}
+
+let emptyGrid = function (divGrid){
+    while(divGrid.firstChild){
+        divGrid.removeChild(divGrid.firstChild);
+    }
+}
+let createGrid = function (side, bgColor){
     let theDivGrid = document.querySelector('.grid');
-    let gridDimensions = getGridDimensions(theDivGrid);
-    console.log(gridDimensions);
+    let gridDimensions = calculateGridDimensions(theDivGrid);
+    let elementDimensions = 0;
     let element = null;
-    let elementDimensions = gridDimensions.width/side + "px";
-    console.log(elementDimensions);
+
+
+    emptyGrid(theDivGrid);
+    sliderControls(side);
+    
     for(let i = 0; i< side ; ++i){
         for (let j = 0 ; j < side ; ++j){
-            element = document.createElement("div");
-            element.style.height = elementDimensions;
-            element.style.width = elementDimensions;
-            element.addEventListener("mouseenter", setBackgroundCallback(element));
+            element = document.createElement("div");            
+            element.addEventListener("mouseenter", setBackgroundCallback(element, bgColor));
             theDivGrid.append(element);
-            //elementBorder = getComputedStyle(element).borderWidth;
-            //console.log("Border: " + elementBorder);
+            if (elementDimensions === 0){
+                elementDimensions = calculateGridElementDimensions(gridDimensions/side,element);
+            }            
+            element.style.height = elementDimensions + "px";
+            element.style.width = elementDimensions + "px";
         }
     }
 
 }
 
-window.onload = function(){ createGrid(16,16);};
+let sliderControls = function (side, bgColor){
+    let rangeText = document.querySelector(".slider-text");
+    rangeText.innerText = side + " x " + side;
+    let slider = document.querySelector('.slider');
+    
+    slider.addEventListener ("input", (e) => {
+        rangeText.innerText = e.target.value + "x" + e.target.value;
+    });
+    slider.addEventListener("change", (e) => {        
+        createGrid(e.target.value, bgColor);
+    });
+    return;
+}
+
+let app = function (){
+    let backgroundColor = "white";
+    let enteredBackgroundColor = "black";
+    let side = 16;
+
+    createGrid(side, enteredBackgroundColor);
+    sliderControls(side, enteredBackgroundColor);
+}
+window.onload = function(){ app();}
